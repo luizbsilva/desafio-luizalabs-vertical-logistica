@@ -4,6 +4,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface OrderService {
 
-  void uploadOrderFile(MultipartFile file);
+  void uploadOrderFile(MultipartFile file) throws Exception;
 
 }

@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  spring-app:
+    image: process-order-file:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/logistics
+    depends_on:
+      - postgres-db
+  postgres-db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: logistics
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres

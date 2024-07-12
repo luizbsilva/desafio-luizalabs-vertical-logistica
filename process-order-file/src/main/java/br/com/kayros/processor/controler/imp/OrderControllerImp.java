@@ -19,15 +19,14 @@ public class OrderControllerImp implements OrderController {
   private final TransactionService transactionService;
 
   @Override
-  public ResponseEntity<String> save(MultipartFile file) {
+  public ResponseEntity<String> save(MultipartFile file) throws Exception {
     orderService.uploadOrderFile(file);
     return ResponseEntity.ok().body("Processamento Iniciado");
   }
 
   @Override
-  public ResponseEntity<List<TransactionReport>> listAll(Integer pedidoId, LocalDate dataInicial,
-      LocalDate dataFinal) {
-    return ResponseEntity.ok().body(transactionService.findAll(pedidoId, dataInicial, dataFinal));
+  public ResponseEntity<List<TransactionReport>> listAll(Integer orderId, LocalDate initialDate, LocalDate finalDate) {
+    return ResponseEntity.ok().body(transactionService.findAll(orderId, initialDate, finalDate));
   }
 
 }

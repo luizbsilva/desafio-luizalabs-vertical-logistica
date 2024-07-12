@@ -1,5 +1,6 @@
 package br.com.kayros.processor.service.impl;
 
+import br.com.kayros.model.exceptions.ResourceNotFoundException;
 import br.com.kayros.model.reponse.Product;
 import br.com.kayros.model.reponse.TransactionOrder;
 import br.com.kayros.model.reponse.TransactionReport;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,22 +28,9 @@ public class TransactionServiceImpl implements TransactionService {
   private final TransactionRepository repository;
 
   @Override
-  public List<TransactionReport> findAll(Integer pedidoId, LocalDate dataInicial,
-      LocalDate dataFinal) {
+  public List<TransactionReport> findAll(Integer orderId, LocalDate initialDate, LocalDate finalDate) {
 
-    Specification<Transaction> spec = Specification.where(null);
-
-    if (pedidoId != null) {
-      spec = spec.and(TransactionSpecifications.hasTransactionByOrderId(pedidoId));
-    }
-    if (dataInicial != null) {
-      spec = spec.and(TransactionSpecifications.hasDynamicMovementDateBefore(dataInicial));
-    }
-    if (dataFinal != null) {
-      spec = spec.and(TransactionSpecifications.hasDynamicMovementDateAfter(dataFinal));
-    }
-
-    List<Transaction> transactions = repository.findAll(spec);
+    List<Transaction> transactions = findByFilter(orderId, initialDate, finalDate);
 
     List<Map<String, String>> listOfMaps = transactions.stream()
         .map(transaction -> {
@@ -86,5 +75,24 @@ public class TransactionServiceImpl implements TransactionService {
           );
         })
         .toList();
+  }
+
+  private List<Transaction> findByFilter(Integer orderId, LocalDate initialDate, LocalDate finalDate) {
+
+    Specification<Transaction> spec = Specification.where(null);
+
+    if (orderId != null) {
+      spec = spec.and(TransactionSpecifications.hasTransactionByOrderId(orderId));
+    }
+    if (initialDate != null) {
+      spec = spec.and(TransactionSpecifications.hasDynamicMovementDateBefore(initialDate));
+    }
+    if (finalDate != null) {
+      spec = spec.and(TransactionSpecifications.hasDynamicMovementDateAfter(finalDate));
+    }
+    return Optional.of(repository.findAll(spec))
+        .orElseThrow(() -> new ResourceNotFoundException(
+            "Search not found for parameters. Order Id: " + orderId + "  Initial Date: " + initialDate + "  Final Date: " + finalDate + ", Type: " + TransactionReport.class.getSimpleName()
+        ));
   }
 }

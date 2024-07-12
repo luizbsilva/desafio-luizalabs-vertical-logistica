@@ -1,6 +1,5 @@
 package br.com.kayros.processor.controler;
 
-
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import br.com.kayros.model.exceptions.StandardError;
@@ -32,7 +31,7 @@ public interface OrderController {
       @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = APPLICATION_JSON_VALUE, schema = @Schema(implementation = StandardError.class))
       )})
   @PostMapping("upload")
-  ResponseEntity<String> save(@RequestParam("file") MultipartFile file);
+  ResponseEntity<String> save(@RequestParam("file") MultipartFile file) throws Exception;
 
   @Operation(summary = "Upload Order")
   @ApiResponses(value = {

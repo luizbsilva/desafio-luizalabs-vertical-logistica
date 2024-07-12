@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface TransactionService {
 
-  List<TransactionReport> findAll(Integer pedidoId, LocalDate dataInicial, LocalDate dataFinal);
+  List<TransactionReport> findAll(Integer orderId, LocalDate initialDate, LocalDate finalDate);
 }
